@@ -7,7 +7,6 @@ import {
   AppShowcaseSection,
   PricingSection,
   StatsSection,
-  FAQSection,
 } from "./components";
 import ShadcnNavbar from "@/components/ShadcnNavbar";
 

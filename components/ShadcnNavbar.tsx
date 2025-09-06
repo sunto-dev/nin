@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -21,10 +21,13 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLiff } from "@/provider/liff-provider";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const ShadcnNavbar = () => {
   const { isScrolled } = useScrollPosition();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { liffReady, liffUser } = useLiff();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -126,7 +129,7 @@ const ShadcnNavbar = () => {
 
           {/* Right Actions */}
           <div className="flex items-center space-x-3">
-            <Button
+            {/*<Button
               size="sm"
               className="cursor-pointer bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
@@ -140,7 +143,12 @@ const ShadcnNavbar = () => {
             >
               <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
               <span className="text-xs font-medium">ประกาศโดยกม</span>
-            </Badge>
+            </Badge>*/}
+
+            <Avatar>
+              <AvatarImage src={liffUser?.pictureUrl} />
+              <AvatarFallback>{liffUser?.displayName}</AvatarFallback>
+            </Avatar>
 
             {/* Mobile Menu */}
             <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
