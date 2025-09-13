@@ -19,6 +19,10 @@ import {
   BookOpen,
   DollarSign,
   HelpCircle,
+  Pointer,
+  LogIn,
+  Loader2,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLiff } from "@/provider/liff-provider";
@@ -27,7 +31,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 const ShadcnNavbar = () => {
   const { isScrolled } = useScrollPosition();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const { liffReady, liffUser } = useLiff();
+  const { liffReady, liffUser, isLoggedIn, login, logout, isLoading } =
+    useLiff();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -63,6 +68,70 @@ const ShadcnNavbar = () => {
       onClick: () => scrollToSection("faq"),
     },
   ];
+
+  const renderUserSection = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center space-x-2">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="text-sm">กำลังโหลด...</span>
+        </div>
+      );
+    }
+
+    if (!isLoggedIn || !liffUser) {
+      return (
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={login}
+          className={cn(
+            "cursor-pointer transition-all duration-300 ",
+            isScrolled
+              ? "border-border text-foreground hover:bg-accent"
+              : "border-white/20 text-black hover:bg-white hover:text-green-500"
+          )}
+        >
+          <LogIn className="w-4 h-4 mr-2 text-black " />
+          เข้าสู่ระบบด้วย LINE
+        </Button>
+      );
+    }
+    return (
+      <div className="flex item-center space-x-3">
+        <Avatar className="cursor-pointer " onClick={logout}>
+          <AvatarImage src={liffUser.pictureUrl} alt={liffUser.displayName} />
+          <AvatarFallback>
+            {liffUser.displayName?.charAt(0) || "U"}
+          </AvatarFallback>
+        </Avatar>
+        <div className="hidden sm:block">
+          <p
+            className={cn(
+              "text-sm font-medium",
+              isScrolled ? "text-foreground" : "text-white/80"
+            )}
+          >
+            {liffUser.displayName}
+          </p>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={logout}
+            className={cn(
+              "cursor-pointer h-auto p-0 text-xs",
+              isScrolled
+                ? "text-muted-foreground hover:text-foreground"
+                : "text-white/70 "
+            )}
+          >
+            <LogOut className="w-3 h-3 mr-1" />
+            ออกจากระบบ
+          </Button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <header
@@ -129,26 +198,12 @@ const ShadcnNavbar = () => {
 
           {/* Right Actions */}
           <div className="flex items-center space-x-3">
-            {/*<Button
-              size="sm"
-              className="cursor-pointer bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-            >
-              <Star className="w-4 h-4 mr-2" />
-              ทดลองใช้ฟรี
-            </Button>
+            {renderUserSection()}
 
-            <Badge
-              variant="secondary"
-              className="hidden sm:flex items-center space-x-2 bg-green-500 text-white hover:bg-green-600 transition-colors"
-            >
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              <span className="text-xs font-medium">ประกาศโดยกม</span>
-            </Badge>*/}
-
-            <Avatar>
+            {/* <Avatar>
               <AvatarImage src={liffUser?.pictureUrl} />
               <AvatarFallback>{liffUser?.displayName}</AvatarFallback>
-            </Avatar>
+            </Avatar> */}
 
             {/* Mobile Menu */}
             <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
