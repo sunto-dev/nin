@@ -6,8 +6,6 @@
     "dev": "next dev --turbopack",
     "dev:tunnel": "concurrently \"next dev --turbopack\" \"npx localtunnel --port 3000 --subdomain myapp\"",
     "tunnel": "npx localtunnel --port 3000 --subdomain myapp",
-    "server": "nodemon server.js",
-    "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
