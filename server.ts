@@ -1,6 +1,6 @@
-const express = require("express");
-const axios = require("axios");
-const dotenv = require("dotenv");
+import express, { Request, Response } from "express";
+import axios from "axios";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -18,13 +18,15 @@ const headers = {
   Authorization: `Bearer ${LINE_CHANNEL_ACCESS_TOKEN}`,
 };
 
+interface SendMessageRequest {
+  userId: string;
+  message: string;
+}
+
 app.post(
   "/send-message",
-  async (req: any, res: any) => {
+  async (req: Request<{}, {}, SendMessageRequest>, res: Response) => {
     try {
-      console.log("Request body:", req.body);
-      console.log("LINE Token:", LINE_CHANNEL_ACCESS_TOKEN ? "Set" : "Missing");
-      
       const { userId, message } = req.body;
       if (!userId || !message) {
         return res.status(400).json({
@@ -42,19 +44,17 @@ app.post(
         ],
       };
 
-      console.log("Sending to LINE:", body);
-
       const response = await axios.post(`${LINE_BOT_API}/message/push`, body, {
         headers,
       });
-      console.log("LINE response:", response.data);
+      console.log("response", response.data);
 
       res.json({
         message: "Send message success",
         responseData: response.data,
       });
     } catch (error: any) {
-      console.log("Full error:", error.response?.data || error.message);
+      console.log("error", error.response?.data || error.message);
       res.status(500).json({
         error: "Failed to send message",
         details: error.response?.data || error.message,
@@ -63,16 +63,14 @@ app.post(
   }
 );
 
-app.get("/health", (req: any, res: any) => {
+// ✅ แก้ไข - ขาด / หน้า health
+app.get("/health", (req: Request, res: Response) => {
   res.json({
     status: "ok",
     token: LINE_CHANNEL_ACCESS_TOKEN ? "Set" : "Missing",
-    port: PORT
   });
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
-  console.log(`📋 Health check: http://localhost:${PORT}/health`);
-  console.log(`💬 Send message: POST http://localhost:${PORT}/send-message`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });
