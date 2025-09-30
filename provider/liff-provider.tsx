@@ -44,25 +44,43 @@ export function LiffProvider({ children }: { children: ReactNode }) {
     const initLiff = async () => {
       try {
         setIsLoading(true);
+        console.log(
+          "Initializing LIFF with ID:",
+          process.env.NEXT_PUBLIC_LIFF_ID
+        );
+
         await liff.init({
           liffId: process.env.NEXT_PUBLIC_LIFF_ID!,
         });
 
         setLiffReady(true);
-        console.log("LIFF initialized");
+        console.log("LIFF initialized successfully");
+        console.log("LIFF OS:", liff.getOS());
+        console.log("Is in client:", liff.isInClient());
+        console.log("Is logged in:", liff.isLoggedIn());
 
         const loginstatus = liff.isLoggedIn();
         setIsLoggedIn(loginstatus);
+
         // ถ้า login แล้วดึงข้อมูล user
         if (loginstatus) {
-          const profile = (await liff.getProfile()) as LiffProfile;
-          setLiffUser(profile);
-          console.log("user profile loaded:", profile);
+          try {
+            const profile = (await liff.getProfile()) as LiffProfile;
+            setLiffUser(profile);
+            console.log("User profile loaded:", profile);
+          } catch (profileError) {
+            console.error("Failed to get profile:", profileError);
+            // ถึงแม้ get profile ไม่ได้ก็ยังคง login อยู่
+          }
         } else {
-          console.log("user not logged in");
+          console.log("User not logged in");
         }
       } catch (error) {
         console.error("LIFF init failed:", error);
+        console.error("Error details:", {
+          liffId: process.env.NEXT_PUBLIC_LIFF_ID,
+          error: error,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -73,7 +91,10 @@ export function LiffProvider({ children }: { children: ReactNode }) {
 
   const login = () => {
     if (liffReady && !isLoggedIn) {
-      liff.login();
+      console.log("Starting LINE login...");
+      liff.login({
+        redirectUri: window.location.origin
+      });
     }
   };
 

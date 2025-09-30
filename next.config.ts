@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["cooked-benefits-steel-vertex.trycloudflare.com"],
   images: {
     remotePatterns: [
       {

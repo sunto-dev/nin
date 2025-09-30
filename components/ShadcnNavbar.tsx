@@ -70,11 +70,29 @@ const ShadcnNavbar = () => {
   ];
 
   const renderUserSection = () => {
+    // เพิ่ม debug log
+    console.log("Navbar render states:", {
+      isLoading,
+      liffReady,
+      isLoggedIn,
+      hasUser: !!liffUser
+    });
+
     if (isLoading) {
       return (
         <div className="flex items-center space-x-2">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span className="text-sm">กำลังโหลด...</span>
+        </div>
+      );
+    }
+
+    // เพิ่มเงื่อนไขตรวจสอบ liffReady
+    if (!liffReady) {
+      return (
+        <div className="flex items-center space-x-2">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span className="text-sm">เตรียมระบบ...</span>
         </div>
       );
     }
